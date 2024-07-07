@@ -3,11 +3,12 @@ import { Text, View, TextInput, StyleSheet, Pressable, Linking } from "react-nat
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export default function Login({navigation}) {
+export default function Register({navigation}) {
 
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
 
   async function handleSubmit() {
     if (!email || !password) {
@@ -20,22 +21,24 @@ export default function Login({navigation}) {
       return
     }
 
+    try {
+        await AsyncStorage.setItem(
+          'Email',
+          email,
+        );
+        await AsyncStorage.setItem(
+          'Password',
+          password,
+        );
+      } catch (error) {
+        // Error saving data
+        console.log('An error occured in asyncstorage: ' + error)
+      }  
+
     console.log(email)
     console.log(password)
+    console.log(name)
 
-    try {
-      await AsyncStorage.setItem(
-        'Email',
-        email,
-      );
-      await AsyncStorage.setItem(
-        'Password',
-        password,
-      );
-    } catch (error) {
-      // Error saving data
-      console.log('An error occured in asyncstorage: ' + error)
-    }
     navigation.navigate('Dashboard')
   }
 
@@ -47,7 +50,12 @@ export default function Login({navigation}) {
         alignItems: "center",
       }}
     >
-    <Text style={styles.heading}>Login</Text>
+    <Text style={styles.heading}>Register</Text>
+    <TextInput 
+    style={styles.input}
+    placeholder="Name" 
+    onChangeText={(newText) => setName(newText)}
+    />
     <TextInput 
     style={styles.input}
     placeholder="Email" 
@@ -67,7 +75,7 @@ export default function Login({navigation}) {
         </Pressable>
 
 
-    <Text style={styles.error}>Don't have an account? <Text style={styles.link} onPress={() => navigation.navigate('Register')}>Create one!</Text></Text>
+    <Text style={styles.error}>Already have an account? <Text style={styles.link} onPress={() => navigation.navigate('Login')}>Log in!</Text></Text>
     </View>
   
   );
