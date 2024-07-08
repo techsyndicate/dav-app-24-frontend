@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Text, View, TextInput, StyleSheet, Pressable, Linking } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
 
 
 export default function Register({navigation}) {
@@ -8,10 +10,20 @@ export default function Register({navigation}) {
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
+  const [cnfpassword, setCnfPassword] = useState('')
+  const [fname, setFName] = useState('')
+  const [lname, setLName] = useState('')
+
+  const data = {
+    fname: fname,
+    lname: lname,
+    email: email,
+    password: password,
+    cnfpassword: cnfpassword
+  }
 
   async function handleSubmit() {
-    if (!email || !password) {
+    if (!email || !password || !fname || !lname || !cnfpassword) {
       setError("Please enter all the details.")
       return
     }
@@ -20,26 +32,25 @@ export default function Register({navigation}) {
       setError("Please enter a valid email.")
       return
     }
-
-    try {
-        await AsyncStorage.setItem(
-          'Email',
-          email,
-        );
-        await AsyncStorage.setItem(
-          'Password',
-          password,
-        );
-      } catch (error) {
-        // Error saving data
-        console.log('An error occured in asyncstorage: ' + error)
-      }  
-
-    console.log(email)
-    console.log(password)
-    console.log(name)
-
-    navigation.navigate('Dashboard')
+  
+    await axios.post('https://dav-app-24-backend.onrender.com/register', data)
+    .then(async result => {
+      // console.log(result)
+      const txt = result.data
+      if (txt.success) {
+        try {
+          await AsyncStorage.setItem(
+            'id',
+            txt.message,
+          );
+        } catch (error) {
+          console.log('An error occured in asyncstorage: ' + error)
+        }
+        navigation.navigate('Post')
+      } else {
+        setError(txt.message)
+      }
+    })    
   }
 
   return (
@@ -53,8 +64,13 @@ export default function Register({navigation}) {
     <Text style={styles.heading}>Register</Text>
     <TextInput 
     style={styles.input}
-    placeholder="Name" 
-    onChangeText={(newText) => setName(newText)}
+    placeholder="First Name" 
+    onChangeText={(newText) => setFName(newText)}
+    />
+    <TextInput 
+    style={styles.input}
+    placeholder="Last Name" 
+    onChangeText={(newText) => setLName(newText)}
     />
     <TextInput 
     style={styles.input}
@@ -66,6 +82,11 @@ export default function Register({navigation}) {
     secureTextEntry={true}
     onChangeText={(newText) => setPassword(newText)}
     placeholder="Password" />
+    <TextInput 
+    style={styles.input}
+    secureTextEntry={true}
+    onChangeText={(newText) => setCnfPassword(newText)}
+    placeholder="Confirm Password" />
     <Text style={styles.error}>{error}</Text>
     <Pressable 
         style={styles.button}

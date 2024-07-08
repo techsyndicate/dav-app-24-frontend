@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TextInput, StyleSheet, Pressable, Linking } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 export default function Login({navigation}) {
+
+  const { patanahi } = route.params;
 
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
@@ -19,24 +22,29 @@ export default function Login({navigation}) {
       setError("Please enter a valid email.")
       return
     }
-
-    console.log(email)
-    console.log(password)
-
-    try {
-      await AsyncStorage.setItem(
-        'Email',
-        email,
-      );
-      await AsyncStorage.setItem(
-        'Password',
-        password,
-      );
-    } catch (error) {
-      // Error saving data
-      console.log('An error occured in asyncstorage: ' + error)
-    }
-    navigation.navigate('Dashboard')
+    const data = {
+      email: email,
+      password: password
+    };
+    
+    await axios.post('https://dav-app-24-backend.onrender.com/login', data)
+    .then(async result => {
+      // console.log(result)
+      const txt = result.data
+      if (txt.success) {
+        try {
+          await AsyncStorage.setItem(
+            'id',
+            txt.message,
+          );
+        } catch (error) {
+          console.log('An error occured in asyncstorage: ' + error)
+        }
+        navigation.navigate('Post')
+      } else {
+        setError(txt.message)
+      }
+    })    
   }
 
   return (

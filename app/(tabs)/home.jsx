@@ -5,8 +5,7 @@ import { useFonts ,Outfit_400Regular, Outfit_700Bold } from '@expo-google-fonts/
 
 export default function Home({navigation}) {
   
-  const [email, setEmail] = useState('')
-  const [pass, setPass] = useState('')
+  const [id, setId] = useState('')
   let [fontsLoaded] = useFonts({
     Outfit_400Regular,
     Outfit_700Bold
@@ -18,25 +17,34 @@ export default function Home({navigation}) {
 
 
   async function fetchDataFromAsyncStorage() {
-    const storedEmail = await AsyncStorage.getItem('Email');
-    const storedPass = await AsyncStorage.getItem('Password');
+    const storedId = await AsyncStorage.getItem('id');
   
-    console.log("the stored email and pass is: ", storedEmail, storedPass)
-    setEmail(storedEmail)
-    setPass(storedPass)
+    setId(storedId)
   }
+
+  fetchDataFromAsyncStorage()
 
   return (
     <View
       style={styles.container}
     >
-      <Text style={styles.heading}>Hi there! 👋</Text>
-      <Pressable 
+      <Text style={styles.heading}>Hi user! 👋</Text>
+      {
+        id ? 
+        <Pressable 
+        style={styles.button}
+        onPress={() => navigation.navigate('Post')}
+      >
+        <Text style={styles.buttonTxt}>Go to post</Text>
+        </Pressable> : 
+        <Pressable 
         style={styles.button}
         onPress={() => navigation.navigate('Login')}
       >
         <Text style={styles.buttonTxt}>Login</Text>
         </Pressable>
+      }
+      
       {/* <Button
         title="Fetch"
         onPress={() => fetchDataFromAsyncStorage()}
