@@ -6,8 +6,6 @@ import axios from 'axios';
 
 export default function Login({navigation}) {
 
-  const { patanahi } = route.params;
-
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

@@ -123,11 +123,25 @@ export default function Post({ navigation }) {
         </Pressable>
       </View>
       {imageUri && (
-        <Image
-          source={{ uri: imageUri }}
-          style={{ width: 100, height: 100, alignSelf: "flex-start", marginLeft: 55, borderRadius: 5 }}
-        />
+        <View style={styles.imageContainer}>
+          <Pressable 
+        style={styles.cross}
+        onPress={() => setImageUri('')}
+      >
+          <Image style={styles.cross} source={require('../../assets/images/cross.png' )} />
+        </Pressable>
+          <Image
+            source={{ uri: imageUri }}
+            style={{ width: 100, height: 100, borderRadius: 5 }}
+          />
+        </View>
       )}
+      <Pressable 
+        style={styles.button3}
+        onPress={() => {console.log('submitted')}}
+      >
+        <Text style={styles.buttonTxt2}>Submit</Text>
+        </Pressable>
     </View>
   );
 }
@@ -139,19 +153,33 @@ const styles = StyleSheet.create({
     fontSize: 40,
     marginBottom: 30
   },
+  imageContainer: {
+    position: 'relative',
+    alignSelf: 'flex-start',
+    marginLeft: '15%'
+  },
+  cross: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    top: '-12%',
+    right: '-4%',
+    zIndex: 100
+  },
   buttonContainer: {
     display: 'flex',
+    width: '70%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
+    justifyContent: 'space-between',
+    // gap: 10,
     marginTop: -20
   },
   heading2: {
     fontFamily: "Outfit_400Regular",
     fontSize: 20,
     alignSelf: 'flex-start',
-    marginLeft: 55,
+    marginLeft: '15%',
     marginBottom: 10,
     marginTop: 10
   },
@@ -166,11 +194,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20
   },
+  button3: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#16e16e',
+    marginTop: 20,
+    marginBottom: 20
+  },
   buttonTxt: {
     fontSize: 16,
     lineHeight: 21,
     letterSpacing: 0.25,
     color: 'white',
+    fontFamily: "Outfit_400Regular"
+  },
+  buttonTxt2: {
+    fontSize: 16,
+    lineHeight: 21,
+    letterSpacing: 0.25,
+    color: 'black',
     fontFamily: "Outfit_400Regular"
   },
   input: {
