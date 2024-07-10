@@ -28,6 +28,11 @@ export default function Register({navigation}) {
       return
     }
     
+    if ((fname.length + lname.length) > 22) {
+      setError("Both names combined cannot be more than 25 letters long.")
+      return
+    }
+    
     if (!email.includes("@")) {
       setError("Please enter a valid email.")
       return
@@ -46,7 +51,7 @@ export default function Register({navigation}) {
         } catch (error) {
           console.log('An error occured in asyncstorage: ' + error)
         }
-        navigation.navigate('Post')
+        navigation.navigate('Dashboard')
       } else {
         setError(txt.message)
       }

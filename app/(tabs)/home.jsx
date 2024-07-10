@@ -16,6 +16,11 @@ export default function Home({navigation}) {
   }
 
 
+  async function handleLogoutUser() {
+    await AsyncStorage.removeItem('id');
+    setId('')
+  }
+
   async function fetchDataFromAsyncStorage() {
     const storedId = await AsyncStorage.getItem('id');
   
@@ -31,12 +36,20 @@ export default function Home({navigation}) {
       <Text style={styles.heading}>Hi user! 👋</Text>
       {
         id ? 
+        <View>
         <Pressable 
         style={styles.button}
-        onPress={() => navigation.navigate('Post')}
-      >
-        <Text style={styles.buttonTxt}>Go to post</Text>
-        </Pressable> : 
+        onPress={() => navigation.navigate('Dashboard')}
+        >
+        <Text style={styles.buttonTxt}>Go to dashboard</Text>
+        </Pressable>
+        <Pressable 
+        style={styles.button2}
+        onPress={() => handleLogoutUser()}
+        >
+        <Text style={styles.buttonTxt}>Logout</Text>
+        </Pressable>
+        </View> : 
         <Pressable 
         style={styles.button}
         onPress={() => navigation.navigate('Login')}
@@ -72,6 +85,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
+    backgroundColor: 'black',
+  },
+  button2: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    marginTop: 15,
     backgroundColor: 'black',
   },
   buttonTxt: {

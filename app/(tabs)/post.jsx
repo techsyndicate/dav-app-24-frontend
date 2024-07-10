@@ -1,17 +1,42 @@
 import React, { useState } from "react";
-import { Text, View, Pressable, Image, Alert, StyleSheet, TextInput, TextArea } from "react-native";
+import { Text, View, Pressable, Image, Alert, StyleSheet, TextInput, TextArea, DevSettings } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 
 export default function Post({ navigation }) {
-
   const [imageUri, setImageUri] = useState(null);
+  const [error, setError] = useState('');
   const [id, setId] = useState('');
+  const [base64, setBase64] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
 
+
+  async function handleSubmit() {
+    const data = {
+      image: base64,
+      userid: id,
+      title: title,
+      data: desc
+    }
+    await axios.post('https://dav-app-24-backend.onrender.com/media/create', data)
+    .then(async result => {
+      const txt = result.data
+      if (txt.success) {
+        try {
+          console.log(txt.message)
+        } catch (error) {
+          console.log('An error occured in asyncstorage: ' + error)
+        }
+        navigation.navigate('Dashboard')
+      } else {
+        console.log(txt.message)
+        setError(error)
+      }
+    })
+  }
 
   async function fetchDataFromAsyncStorage() {
     const storedId = await AsyncStorage.getItem('id');
@@ -40,26 +65,7 @@ export default function Post({ navigation }) {
     if (!result.canceled) {
       const base64String = result.assets[0].base64;
       console.log(base64String.slice(0, 20));
-      // const data = {
-      //   image: base64String,
-      //   userid: id,
-      //   title: 'bhavit',
-      //   data: 'shyamak <3 bhavit'
-      // }
-      // await axios.post('https://dav-app-24-backend.onrender.com/register', data)
-      // .then(async result => {
-      //   const txt = result.data
-      //   if (txt.success) {
-      //     try {
-      //       console.log(txt.message)
-      //     } catch (error) {
-      //       console.log('An error occured in asyncstorage: ' + error)
-      //     }
-      //     route.navigate('Dashboard')
-      //   } else {
-      //     console.log(txt.message)
-      //   }
-      // })
+      setBase64(base64String)
       setImageUri(result.assets[0].uri);
     }
   };
@@ -81,7 +87,8 @@ export default function Post({ navigation }) {
 
     if (!result.canceled) {
       const base64String = result.assets[0].base64;
-      console.log(base64String);
+      console.log(base64String.slice(0,20));
+      setBase64(base64String)
       setImageUri(result.assets[0].uri);
     }
   };
@@ -138,10 +145,11 @@ export default function Post({ navigation }) {
       )}
       <Pressable 
         style={styles.button3}
-        onPress={() => {console.log('submitted')}}
+        onPress={() => {handleSubmit()}}
       >
         <Text style={styles.buttonTxt2}>Submit</Text>
         </Pressable>
+        <Text>{error}</Text>
     </View>
   );
 }
